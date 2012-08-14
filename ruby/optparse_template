@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+require 'optparse'                                                                                                                                                                                                                                                                                                                                                                                               
+
+begin
+  
+  options = {}
+
+  optparse = OptionParser.new do |opts|
+
+    opts.on('-a', '--mandatory_parameter MANDATORY_PARAMETER', 'a message about the required parameter') do |mandatory_parameter|
+      options[:mandatory_parameter] = mandatory_parameter
+    end
+
+    # Optional parameter default value
+    options[:optional_parameter] = 100
+    opts.on('-b', '--optional_parameter OPTIONAL_PARAMETER', 'a message about the optional parameter') do |optional_parameter|
+      options[:optional_parameter] = optional_parameter
+    end
+
+    opts.on('-h', '--help', 'Display this screen') do
+      puts opts
+      exit 0
+    end                                                                                                                                                                                                             
+  end
+
+  begin                                                                                                                                                                                                             
+    optparse.parse!                                                                                                                                                                                                 
+    mandatory = [:mandatory_parameter]
+    missing = mandatory.select{ |param| options[param].nil? }
+    unless missing.empty?
+      puts "Missing options: #{missing.join(', ')}"
+      puts optparse
+      exit 1
+    end
+  rescue OptionParser::InvalidOption, OptionParser::MissingArgument
+    puts $!.to_s
+    puts optparse
+    exit 1
+  end
+
+  # > Do executable stuff here
+  # > Reference parameters using the options hash
+  # > Use 'exit 0' or 'exit 1' to return status codes 
+
+rescue StandardError => e
+  puts "Exiting with status code 1"
+  puts "An error occurred: #{e.message}"
+  exit 1
+end
